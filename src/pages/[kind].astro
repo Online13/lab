@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import { getProjects, kinds, type Kind } from '../lib/projects';
+
+export function getStaticPaths() {
+	return (Object.keys(kinds) as Kind[]).map((kind) => ({ params: { kind } }));
+}
+
+const kind = Astro.params.kind as Kind;
+const { plural, blurb } = kinds[kind];
+const projects = await getProjects(kind);
+---
+<Layout title={plural} description={blurb}>
+	<h1>{plural}</h1>
+	<p class="sub">{blurb}</p>
+	<ProjectGrid projects={projects} empty="Rien ici pour le moment." />
+</Layout>
+
+<style>
+	h1 { font-size: 28px; margin-top: 8px; }
+	.sub { margin: 4px 0 24px; color: var(--muted); font-size: 16px; }
+</style>

@@ -1,0 +1,70 @@
+---
+import Icon from './Icon.astro';
+import { getProjects, kinds } from '../lib/projects';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const projects = await getProjects();
+const nav = [
+	{ href: '/', label: 'Accueil', icon: 'home' },
+	{ href: '/web', label: kinds.web.plural, icon: 'web' },
+	{ href: '/showcase', label: kinds.showcase.plural, icon: 'showcase' },
+] as const;
+---
+<aside class="sidebar" id="sidebar">
+	<a href="/" class="brand">
+		<span class="logo" aria-hidden="true"></span>
+		Lab
+	</a>
+
+	<a href="/nouvelle-experience" class="btn new"><Icon name="plus" /> Nouvelle expérience</a>
+
+	<nav aria-label="Navigation principale">
+		{nav.map((item) => (
+			<a href={item.href} class="item" aria-current={path === item.href ? 'page' : undefined}>
+				<Icon name={item.icon} /> {item.label}
+			</a>
+		))}
+	</nav>
+
+	<p class="section">Projets</p>
+	<nav class="projects" aria-label="Projets">
+		{projects.length === 0 && <p class="empty">Aucun projet pour l'instant.</p>}
+		{projects.map((p) => (
+			<a href={`/p/${p.id}`} class="item" aria-current={path === `/p/${p.id}` ? 'page' : undefined}>
+				<Icon name="folder" /> <span>{p.data.title}</span>
+			</a>
+		))}
+	</nav>
+
+	<footer>
+		<span class="avatar" aria-hidden="true">N</span>
+		<span>Nekena Rayane</span>
+	</footer>
+</aside>
+
+<style>
+	.sidebar {
+		position: sticky; top: 0; height: 100dvh;
+		display: flex; flex-direction: column; gap: 6px;
+		width: 240px; padding: 18px 14px;
+		background: var(--sidebar); border-right: 1px solid var(--border);
+	}
+	.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; padding: 4px 6px 14px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+	.logo { width: 18px; height: 18px; border-radius: 50% 50% 4px 4px; background: linear-gradient(180deg, var(--accent) 50%, #f7b98c 50%); }
+	.new { margin-bottom: 12px; }
+	.section { margin: 14px 6px 4px; color: var(--muted); font-size: 12px; }
+	nav { display: flex; flex-direction: column; gap: 2px; }
+	.projects { overflow-y: auto; flex: 1; }
+	.item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; color: #3d3b38; }
+	.item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.item:hover { background: var(--hover); }
+	.item[aria-current='page'] { background: var(--hover); color: var(--text); font-weight: 500; }
+	.empty { margin: 4px 10px; color: var(--muted); font-size: 13px; }
+	footer { display: flex; align-items: center; gap: 10px; padding: 14px 6px 0; border-top: 1px solid var(--border); font-weight: 500; }
+	.avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #6d6a65; color: #fff; font-size: 13px; }
+
+	@media (max-width: 860px) {
+		.sidebar { position: fixed; z-index: 20; left: 0; transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: var(--shadow); }
+		:global(body.nav-open) .sidebar { transform: none; }
+	}
+</style>

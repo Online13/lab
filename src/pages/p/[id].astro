@@ -1,0 +1,48 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getProjects, kinds, statuses } from '../../lib/projects';
+
+export async function getStaticPaths() {
+	return (await getProjects()).map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const date = data.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Layout title={data.title} description={data.description}>
+	<a slot="topbar" href={`/${data.kind}`} class="back"><Icon name="back" /> {kinds[data.kind].plural}</a>
+
+	<article>
+		<div class="meta">
+			<span class="pill">{kinds[data.kind].label}</span>
+			<span class="pill">{statuses[data.status]}</span>
+			<time datetime={data.date.toISOString()}>{date}</time>
+		</div>
+		<h1>{data.title}</h1>
+		<p class="lead">{data.description}</p>
+		{data.demo && <a href={data.demo} class="btn">Ouvrir la démo <Icon name="external" /></a>}
+		{data.cover && <img src={data.cover} alt="" class="cover" />}
+		<div class="prose"><Content /></div>
+		{data.tags.length > 0 && <p class="tags">{data.tags.map((t) => <span class="pill">#{t}</span>)}</p>}
+	</article>
+</Layout>
+
+<style>
+	.back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+	.back:hover { color: var(--text); }
+	.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+	h1 { font-size: clamp(26px, 5vw, 34px); margin: 14px 0 6px; }
+	.lead { margin: 0 0 20px; font-size: 18px; color: var(--muted); }
+	.cover { width: 100%; margin-top: 24px; border-radius: var(--radius); border: 1px solid var(--border); }
+	.prose { margin-top: 28px; font-size: 16px; line-height: 1.7; }
+	.prose :global(h2) { font-size: 20px; margin: 32px 0 8px; }
+	.prose :global(img) { max-width: 100%; border-radius: 10px; }
+	.prose :global(code) { background: var(--hover); padding: 1px 5px; border-radius: 5px; font-size: 0.9em; }
+	.prose :global(pre) { padding: 14px; border-radius: 10px; overflow-x: auto; }
+	.prose :global(a) { color: #b0551a; text-decoration: underline; }
+	.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 32px; }
+</style>

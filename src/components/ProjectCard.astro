@@ -1,0 +1,25 @@
+---
+import { kinds, statuses, type Project } from '../lib/projects';
+
+interface Props { project: Project }
+const { id, data } = Astro.props.project;
+const tone = { todo: '', wip: 'accent', done: 'green' }[data.status];
+---
+<a href={`/p/${id}`} class="card" data-search={[data.title, data.description, ...data.tags].join(' ').toLowerCase()}>
+	{data.cover && <img src={data.cover} alt="" loading="lazy" />}
+	<div class="meta">
+		<span class="pill">{kinds[data.kind].label}</span>
+		<span class:list={['pill', tone]}>{statuses[data.status]}</span>
+	</div>
+	<h3>{data.title}</h3>
+	<p>{data.description}</p>
+</a>
+
+<style>
+	.card { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); transition: box-shadow 0.15s, transform 0.15s; }
+	.card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+	img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; background: var(--surface-2); }
+	.meta { display: flex; gap: 6px; }
+	h3 { font-size: 15px; }
+	p { margin: 0; color: var(--muted); }
+</style>

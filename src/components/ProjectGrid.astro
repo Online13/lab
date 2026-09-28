@@ -1,0 +1,21 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import type { Project } from '../lib/projects';
+
+interface Props { projects: Project[]; empty: string }
+const { projects, empty } = Astro.props;
+---
+{projects.length === 0 ? (
+	<div class="empty">
+		<p>{empty}</p>
+		<a href="/nouvelle-experience" class="btn ghost">Lancer une expérience</a>
+	</div>
+) : (
+	<div class="grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
+)}
+
+<style>
+	.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+	.empty { display: grid; justify-items: center; gap: 12px; padding: 40px 16px; border: 1px dashed var(--border); border-radius: var(--radius); color: var(--muted); text-align: center; }
+	.empty p { margin: 0; }
+</style>

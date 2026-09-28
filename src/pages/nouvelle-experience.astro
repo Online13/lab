@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Nouvelle expérience">
+	<h1>Lancer une expérience</h1>
+	<p class="sub">Une notion à tester ou à apprendre&nbsp;: tout part d'un fichier Markdown.</p>
+
+	<ol class="steps">
+		<li>
+			<h2>Copier le modèle</h2>
+			<p>Dupliquer <code>src/content/projects/_template.md</code> en <code>ma-notion.md</code>. Le nom du fichier devient l'URL&nbsp;: <code>/p/ma-notion</code>. Tant qu'il commence par <code>_</code>, il reste privé..</p>
+		</li>
+		<li>
+			<h2>Remplir l'en-tête</h2>
+			<p><code>kind: web</code> pour une notion testée dans le navigateur, <code>kind: showcase</code> pour une notion à présenter. Le <code>status</code> vaut <code>todo</code>, <code>wip</code> ou <code>done</code>.</p>
+		</li>
+		<li>
+			<h2>Pour une expérience web&nbsp;: coder la démo</h2>
+			<p>Créer <code>src/pages/experiments/ma-notion/index.astro</code> (page libre, sans le layout du Lab si besoin), puis ajouter <code>demo: /experiments/ma-notion</code> dans l'en-tête.</p>
+		</li>
+		<li>
+			<h2>Pour une présentation&nbsp;: écrire</h2>
+			<p>Le corps du fichier Markdown est la présentation. Les images vont dans <code>public/</code>.</p>
+		</li>
+	</ol>
+</Layout>
+
+<style>
+	h1 { font-size: 28px; margin-top: 8px; }
+	.sub { margin: 4px 0 24px; color: var(--muted); font-size: 16px; }
+	.steps { display: grid; gap: 12px; padding: 0; list-style: none; counter-reset: step; }
+	.steps li { position: relative; padding: 16px 16px 16px 60px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); counter-increment: step; }
+	.steps li::before { content: counter(step); position: absolute; left: 16px; top: 16px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 13px; }
+	.steps h2 { font-size: 15px; }
+	.steps p { margin: 4px 0 0; color: #55524e; }
+	code { background: var(--hover); padding: 1px 5px; border-radius: 5px; font-size: 0.9em; overflow-wrap: anywhere; }
+</style>
